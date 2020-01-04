@@ -24,6 +24,13 @@ class Card:
     def __str__(self):
         return Card.RANKS[self.rank] + "" + self.suit
 
+    def getRank(self):
+        return self.rank
+
+    def getSuit(self):
+        return self.suit
+
+
 
 class Deck:
     def __init__(self):
