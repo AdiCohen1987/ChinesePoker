@@ -20,6 +20,8 @@ class Play:
         # for item in player2Hands:
         #     print(item.__getitem__(0), end="  ")
         dealAllCards(deck, player1Hands, player2Hands)
+        results = evaluateHands(player1Hands, player2Hands, deck)
+
         for item in player2Hands:
             for x in range(0, numOfHandsAndCards):
                 print(item.__getitem__(x), end="  ")
@@ -30,16 +32,13 @@ class Play:
                 print(item.__getitem__(x), end="  ")
             print('\n')
 
-        evaluateHands(player1Hands, player2Hands, deck)
+
         print('\n')
 
 
 class Hand:
     def __init__(self, cardsList=None):
         self.hand = []
-        self.score = 0
-        self.hasWon = False
-        self.handType = None
         if cardsList is not None:
             self.createHand(cardsList)
 
@@ -55,12 +54,6 @@ class Hand:
 
     def __getitem__(self, x):
         return self.hand[x]
-
-    def setHandType(self, handType):
-        self.handType = handType
-
-    def getHandType(self, handType):
-        return self.handType
 
 
 def dealInitialCards(deck, player1Hands, player2Hands):
@@ -87,7 +80,7 @@ def createColumnsHands(cardsRows):
 def evaluateHands(myCardsRows, otherPlayerCardsRows, deckCards):
     player1Hands = createColumnsHands(myCardsRows)
     player2Hands = createColumnsHands(otherPlayerCardsRows)
-    GameLogic.checkHands(player1Hands, player2Hands, deckCards)
+    return GameLogic.checkHands(player1Hands, player2Hands, deckCards)
 
 
 def createColumnsHands(cardsRows):
