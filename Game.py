@@ -32,8 +32,8 @@ class Play:
                 print(item.__getitem__(x), end="  ")
             print('\n')
 
-
-        print('\n')
+        for result in results:
+            print('result')
 
 
 class Hand:
