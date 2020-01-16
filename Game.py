@@ -13,13 +13,19 @@ class Play:
             player1Hands.append(Hand())
             player2Hands.append(Hand())
         deck.shuffle()
-        # dealInitialCards(deck, player1Hands, player2Hands)
-        # for item in player1Hands:
-        #     print(item.__getitem__(0),end="  ")
-        # print()
-        # for item in player2Hands:
-        #     print(item.__getitem__(0), end="  ")
+
         dealAllCards(deck, player1Hands, player2Hands)
+
+        for item in player2Hands:
+            for x in range(0, numOfHandsAndCards):
+                print(item.__getitem__(x), end="  ")
+            print('\n')
+        print('-------------')
+        for item in player1Hands:
+            for x in range(0, numOfHandsAndCards):
+                print(item.__getitem__(x), end="  ")
+            print('\n')
+
         results = evaluateHands(player1Hands, player2Hands, deck)
 
         for item in player2Hands:
@@ -33,7 +39,7 @@ class Play:
             print('\n')
 
         for result in results:
-            print('result')
+            print(result)
 
 
 class Hand:
