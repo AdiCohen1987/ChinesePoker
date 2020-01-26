@@ -89,13 +89,6 @@ def evaluateHands(myCardsRows, otherPlayerCardsRows, deckCards):
     return GameLogic.checkHands(player1Hands, player2Hands, deckCards)
 
 
-def createColumnsHands(cardsRows):
-    cardsColumns = []
-    createHandsList = list(map(list, zip(*cardsRows)))
-    for item in createHandsList:
-        cardsColumns.append(Hand(item))
-    return cardsRows + cardsColumns
-
 
 if __name__ == '__main__':
     d = Cards.Deck()
