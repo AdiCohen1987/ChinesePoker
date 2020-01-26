@@ -24,12 +24,11 @@ class Card:
     def __str__(self):
         return Card.RANKS[self.rank] + "" + self.suit
 
-    def getRank(self):
+    def get_rank(self):
         return self.rank
 
-    def getSuit(self):
+    def get_suit(self):
         return self.suit
-
 
 
 class Deck:
@@ -39,7 +38,7 @@ class Deck:
             for rank in Card.RANKS:
                 card = Card(rank, suit)
                 self.deck.append(card)
-                #print(Card.__str__(card))
+                # print(Card.__str__(card))
 
     def shuffle(self):
         random.shuffle(self.deck)
@@ -47,11 +46,8 @@ class Deck:
     def __len__(self):
         return len(self.deck)
 
-    def dealCard(self):
+    def deal_card(self):
         if len(self) == 0:
             return None
         else:
             return self.deck.pop(0)
-
-
-
