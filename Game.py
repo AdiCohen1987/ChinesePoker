@@ -1,5 +1,6 @@
 import Cards
 import GameLogic
+from utils import Utilities
 
 numOfHandsAndCards = 5
 
@@ -43,10 +44,10 @@ class Play:
 
 
 class Hand:
-    def __init__(self, cardsList=None):
+    def __init__(self, cards_list=None):
         self.hand = []
-        if cardsList is not None:
-            self.createHand(cardsList)
+        if cards_list is not None:
+            self.createHand(cards_list)
 
     def addCard(self, card):
         self.hand.append(card)
@@ -54,40 +55,17 @@ class Hand:
     def getHand(self):
         return self.hand
 
-    def createHand(self, cardsList):
-        for card in cardsList:
+    def createHand(self, cards_list):
+        for card in cards_list:
             self.hand.append(card)
 
     def __getitem__(self, x):
         return self.hand[x]
 
-
-def dealInitialCards(deck, player1Hands, player2Hands):
-    for x in range(0, numOfHandsAndCards):
-        player1Hands[x].addCard(deck.dealCard())
-        player2Hands[x].addCard(deck.dealCard())
-
-
-def dealAllCards(deck, player1Hands, player2Hands):
-    for x in range(0, numOfHandsAndCards):
-        for y in range(numOfHandsAndCards):
-            player1Hands[x].addCard(deck.dealCard())
-            player2Hands[x].addCard(deck.dealCard())
-
-
-def createColumnsHands(cardsRows):
-    cardsColumns = []
-    createHandsList = list(map(list, zip(*cardsRows)))
-    for item in createHandsList:
-        cardsColumns.append(Hand(item))
-    return cardsRows + cardsColumns
-
-
-def evaluateHands(myCardsRows, otherPlayerCardsRows, deckCards):
-    player1Hands = createColumnsHands(myCardsRows)
-    player2Hands = createColumnsHands(otherPlayerCardsRows)
-    return GameLogic.checkHands(player1Hands, player2Hands, deckCards)
-
+    @property
+    def runner(self):
+        return Utilities.dealInitialCards, Utilities.dealAllCards, Utilities.create_columns_hands \
+            , Utilities.evaluate_hands
 
 
 if __name__ == '__main__':

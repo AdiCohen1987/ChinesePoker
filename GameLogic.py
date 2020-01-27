@@ -12,11 +12,11 @@ def check_hands(player1_hands, player2_hands, deck_cards):
     end_of_game_flag = True if len(deck_cards) < 3 else False
     result = []
     for hand in range(len(player1_hands)):
-        orderedPlayer1Hand = sorted(player1_hands[hand], key=lambda card: card.get_rank(), reverse=True)
-        orderedPlayer2Hand = sorted(player2_hands[hand], key=lambda card: card.get_rank(), reverse=True)
-        player1Rank = evaluate_hand(orderedPlayer1Hand)
-        player2Rank = evaluate_hand(orderedPlayer2Hand)
-        result.append(check_which_hand_is_better(player1Rank, player2Rank))
+        ordered_player1_hand = sorted(player1_hands[hand], key=lambda card: card.get_rank(), reverse=True)
+        ordered_player2_hand = sorted(player2_hands[hand], key=lambda card: card.get_rank(), reverse=True)
+        player1_rank = evaluate_hand(ordered_player1_hand)
+        player2_rank = evaluate_hand(ordered_player2_hand)
+        result.append(check_which_hand_is_better(player1_rank, player2_rank))
     return result
 
 
