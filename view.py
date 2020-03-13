@@ -8,43 +8,53 @@ class GameView:
     WHITE = (255, 255, 255)
     GREEN = (0, 200, 0)
     RED = (255, 0, 0)
-    HEIGHT = 800
     WIDTH = 800
+    HEIGHT = 600
+    DIST_FROM_BOTTOM = 80
+    DIST_FROM_TOP = 90
+    DIST_BETWEEN_NUMBERS = 50
+    DIST_FROM_LEFT_SIDE = 45
+    TRANS_COL_WIDTH = 75
+    TRANS_COL_TOP = 25
+    TRANS_COL_BOTTOM = 315
+    DIST_BETWEEN_COLUMNS = 120
 
     def __init__(self, _player_1_cards, _player_2_cards):
         self._player_1_cards = _player_1_cards
         self._player_2_cards = _player_2_cards
-        self._player_1_cards = [['2C', '2D', '2S', '2H'], ['3C', '3D', '3S', '3H']]
+        self._player_1_cards = [['2C', '2D', '2S', '2H', '10S'], ['3C', '3D', '3S', '3H', '9D']]
 
-    def create_numbers(self, HEIGHT, screen):
+    def createRowsNumbers(self, screen):
         for i in range(1, 6):
-            font = pygame.font.Font('freesansbold.ttf', 25)
+            font = pygame.font.Font('freesansbold.ttf', 20)
             text1 = font.render(str(i), True, self.RED, self.BLACK)
-            textRect = text1.get_rect()
-            screen.blit(text1, (40, (HEIGHT / 2) - (70 * i) - 15))
-            screen.blit(text1, (40, (HEIGHT / 2) + (70 * i) - 30))
+            screen.blit(text1, (self.DIST_FROM_LEFT_SIDE,
+                                (self.HEIGHT / 3) + (i * self.DIST_BETWEEN_NUMBERS) + self.DIST_FROM_BOTTOM))
+            screen.blit(text1, (self.DIST_FROM_LEFT_SIDE,
+                                (self.HEIGHT / 3) - (i * self.DIST_BETWEEN_NUMBERS) + self.DIST_FROM_TOP))
 
-    def create_transparent_rect(self, HEIGHT, screen):
+    def createTransparentRect(self, screen):
         for i in range(1, 6):
-            rect = pygame.Surface((70, (HEIGHT / 2.5)), pygame.SRCALPHA)  # per-pixel alpha
-            rect.fill((255, 255, 255, 128))  # notice the alpha value in the color
-            screen.blit(rect, (130 * i, (HEIGHT / 2) - (70 * 5) - 15))
-            screen.blit(rect, (130 * i, (HEIGHT / 2) + 70 - 35))
+            rect = pygame.Surface((self.TRANS_COL_WIDTH, (self.DIST_BETWEEN_NUMBERS * 5.05)), pygame.SRCALPHA)
+            rect.fill((255, 255, 255, 128))
+            screen.blit(rect, (self.DIST_BETWEEN_COLUMNS * i, self.TRANS_COL_TOP))
+            screen.blit(rect, (self.DIST_BETWEEN_COLUMNS * i, self.TRANS_COL_BOTTOM))
 
     def view(self):
         pygame.init()
-        size = (self.HEIGHT, self.WIDTH)
+        size = (self.WIDTH, self.HEIGHT)
         screen = pygame.display.set_mode(size)
         screen.fill(self.GREEN)
         pygame.display.flip()
-        self.create_numbers(self.HEIGHT, screen)
-        self.create_transparent_rect(self.HEIGHT, screen)
-        for i in range(len(self._player_1_cards)):
-            for j in range(len(self._player_1_cards[i])):
+        self.createRowsNumbers(screen)
+        self.createTransparentRect(screen)
+
+        for i in range(0, 2):
+            for j in range(0, 5):
                 img_string = 'resources/' + self._player_1_cards[i][j] + '.gif'
                 image = pygame.image.load(img_string)
-                screen.blit(image, (80 * j + 150, 80 * i + 400))
-
+                screen.blit(image, (self.DIST_FROM_LEFT_SIDE,
+                                    (self.HEIGHT / 3) + (i * self.DIST_BETWEEN_NUMBERS) + self.DIST_FROM_BOTTOM))
 
         pygame.display.set_caption("Poker")
         # Used to manage how fast the screen updates
@@ -62,10 +72,7 @@ class GameView:
 
             # --- Game logic should go here
 
-
             # --- Screen-clearing code goes here
-
-
 
             # --- Limit to 60 frames per second
             clock.tick(60)

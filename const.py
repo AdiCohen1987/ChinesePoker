@@ -14,3 +14,7 @@ RANKS = {2: '2',
          13: "K",
          14: "A"}
 SUITS = ('S', 'D', 'H', 'C')
+
+HANDS_RANK = {1: 'High Card', 2: 'Pair', 3: 'Two Pairs', 4: 'Three Of A Kind', 5: 'Straight', 6: 'Flush',
+              7: 'Full House', 8: 'Four Of A Kind', 9: 'Straight Flush', 10: 'Royal Flush'}
+RANKS_NAMES = {14: 'A', 13: 'K', 12: 'Q', 11: 'J'}

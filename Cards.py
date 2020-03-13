@@ -46,7 +46,7 @@ class Deck:
     def __len__(self):
         return len(self.deck)
 
-    def deal_card(self):
+    def dealCard(self):
         if len(self) == 0:
             return None
         else:

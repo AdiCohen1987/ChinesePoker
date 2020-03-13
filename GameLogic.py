@@ -1,55 +1,53 @@
 from collections import Counter
 
-HANDS_RANK = {1: 'High Card', 2: 'Pair', 3: 'Two Pairs', 4: 'Three Of A Kind', 5: 'Straight', 6: 'Flush',
-              7: 'Full House', 8: 'Four Of A Kind', 9: 'Straight Flush', 10: 'Royal Flush'}
-RANKS_NAMES = {14: 'A', 13: 'K', 12: 'Q', 11: 'J'}
-
-
 # Royal flush 10,Straight flush 9,Four of a kind 8,Full house 7,Flush 6,
 # Straight 5,Three of a kind 4,Two pair 3, Pair 2, High Card 1
 # value_when_true if condition else value_when_false
-def check_hands(player1_hands, player2_hands, deck_cards):
+from const import RANKS_NAMES, HANDS_RANK
+
+
+def checkHands(player1_hands, player2_hands, deck_cards):
     end_of_game_flag = True if len(deck_cards) < 3 else False
     result = []
     for hand in range(len(player1_hands)):
         orderedPlayer1Hand = sorted(player1_hands[hand], key=lambda card: card.get_rank(), reverse=True)
         orderedPlayer2Hand = sorted(player2_hands[hand], key=lambda card: card.get_rank(), reverse=True)
-        player1Rank = evaluate_hand(orderedPlayer1Hand)
-        player2Rank = evaluate_hand(orderedPlayer2Hand)
-        result.append(check_which_hand_is_better(player1Rank, player2Rank))
+        player1Rank = evaluateHand(orderedPlayer1Hand)
+        player2Rank = evaluateHand(orderedPlayer2Hand)
+        result.append(checkWhichHandIsBetter(player1Rank, player2Rank))
     return result
 
 
-def which_player_won_current_hand_string(key, player, card):
+def whichPlayerWonCurrentHandString(key, player, card):
     if card in RANKS_NAMES:
         card = RANKS_NAMES.get(card)
 
     return 'Player: ' + player + ' won with: ' + HANDS_RANK.get(key) + ' HighestCard: ' + str(card)
 
 
-def check_which_hand_is_better(player1_rank, player2_rank):
+def checkWhichHandIsBetter(player1_rank, player2_rank):
     if list(player1_rank.keys())[0] > list(player2_rank.keys())[0]:
-        return which_player_won_current_hand_string(list(player1_rank.keys())[0], '1',
-                                                    list(player1_rank.values())[0][0])
+        return whichPlayerWonCurrentHandString(list(player1_rank.keys())[0], '1',
+                                               list(player1_rank.values())[0][0])
     elif list(player1_rank.keys())[0] < list(player2_rank.keys())[0]:
-        return which_player_won_current_hand_string(list(player2_rank.keys())[0], '2',
-                                                    list(player2_rank.values())[0][0])
+        return whichPlayerWonCurrentHandString(list(player2_rank.keys())[0], '2',
+                                               list(player2_rank.values())[0][0])
     else:
-        return compare_hands_of_same_rank(player1_rank, player2_rank)
+        return compareHandsOfSameRank(player1_rank, player2_rank)
 
 
-def compare_hands_of_same_rank(player1_rank, player2_rank):
+def compareHandsOfSameRank(player1_rank, player2_rank):
     for card in range(len(list(player1_rank.values())[0])):
         if list(player1_rank.values())[0][card] > list(player2_rank.values())[0][card]:
-            return which_player_won_current_hand_string(list(player1_rank.keys())[0], '1',
-                                                        list(player1_rank.values())[0][0])
+            return whichPlayerWonCurrentHandString(list(player1_rank.keys())[0], '1',
+                                                   list(player1_rank.values())[0][0])
         elif list(player1_rank.values())[0][card] < list(player2_rank.values())[0][card]:
-            return which_player_won_current_hand_string(list(player2_rank.keys())[0], '2',
-                                                        list(player2_rank.values())[0][0])
+            return whichPlayerWonCurrentHandString(list(player2_rank.keys())[0], '2',
+                                                   list(player2_rank.values())[0][0])
     return 'tie'
 
 
-def evaluate_hand(hand):
+def evaluateHand(hand):
     is_flush = True
     is_straight = True
     collection_of_ranks_in_hand = []
@@ -58,7 +56,7 @@ def evaluate_hand(hand):
         collection_of_ranks_in_hand.append(hand[card].get_rank())
         if is_flush and hand[card].get_suit() != suit_type:
             is_flush = False
-        if is_straight and not is_current_card_follows_next_card(card, hand):
+        if is_straight and not isCurrentCardFollowsNextCard(card, hand):
             is_straight = False
     count_the_amount_of_each_rank_in_hand = Counter(collection_of_ranks_in_hand).most_common(5)
     # Royal flush 10,Straight flush 9,Four of a kind 8,Full house 7,Flush 6,
@@ -66,7 +64,7 @@ def evaluate_hand(hand):
     if is_flush and is_straight:
         return {10: [count_the_amount_of_each_rank_in_hand[0][0]]} if hand[0].get_rank() == 14 else {
             9: [count_the_amount_of_each_rank_in_hand[0][0]]}
-    if is_four_of_a_kind(count_the_amount_of_each_rank_in_hand):
+    if isFourOfAKind(count_the_amount_of_each_rank_in_hand):
         return {8: [count_the_amount_of_each_rank_in_hand[0][0], count_the_amount_of_each_rank_in_hand[1][0]]}
     if is_full_house(count_the_amount_of_each_rank_in_hand):
         return {7: [count_the_amount_of_each_rank_in_hand[0][0], count_the_amount_of_each_rank_in_hand[1][0]]}
@@ -91,12 +89,12 @@ def evaluate_hand(hand):
     return high_card(count_the_amount_of_each_rank_in_hand)
 
 
-def is_current_card_follows_next_card(card, hand):
+def isCurrentCardFollowsNextCard(card, hand):
     return ((card == 4) or (card != 4 and hand[card].get_rank() == hand[card + 1].get_rank() + 1) or
             (card == 0 and hand[card].get_rank() == 14 and hand[card + 1].get_rank() == 5))
 
 
-def is_four_of_a_kind(count):
+def isFourOfAKind(count):
     return count[0][1] == 4
 
 
