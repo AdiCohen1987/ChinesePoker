@@ -1,10 +1,11 @@
 import Cards
 import GameLogic
 from const import NUM_OF_HANDS_AND_CARDS
+from view import GameView
 
 
 class Play:
-    def __init__(self, deck):
+    def __init__(self, deck,view):
         self.deck = Cards.Deck()
         player1Hands = []
         player2Hands = []
@@ -105,4 +106,7 @@ class Hand:
 
 if __name__ == '__main__':
     d = Cards.Deck()
-    p = Play(d)
+    p1 = []
+    p2 = []
+    v = GameView(p1, p2)
+    p = Play(d,v)
