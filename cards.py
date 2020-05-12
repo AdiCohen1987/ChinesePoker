@@ -24,10 +24,10 @@ class Card:
     def __str__(self):
         return Card.RANKS[self.rank] + "" + self.suit
 
-    def get_rank(self):
+    def getRank(self):
         return self.rank
 
-    def get_suit(self):
+    def getSuit(self):
         return self.suit
 
 

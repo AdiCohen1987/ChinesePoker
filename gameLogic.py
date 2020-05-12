@@ -6,12 +6,11 @@ from collections import Counter
 from const import RANKS_NAMES, HANDS_RANK
 
 
-def checkHands(player1_hands, player2_hands, deck_cards):
-    end_of_game_flag = True if len(deck_cards) < 3 else False
+def checkHands(player1_hands, player2_hands, end_of_game_flag):
     result = []
     for hand in range(len(player1_hands)):
-        orderedPlayer1Hand = sorted(player1_hands[hand], key=lambda card: card.get_rank(), reverse=True)
-        orderedPlayer2Hand = sorted(player2_hands[hand], key=lambda card: card.get_rank(), reverse=True)
+        orderedPlayer1Hand = sorted(player1_hands[hand], key=lambda card: card.getRank(), reverse=True)
+        orderedPlayer2Hand = sorted(player2_hands[hand], key=lambda card: card.getRank(), reverse=True)
         player1Rank = evaluateHand(orderedPlayer1Hand)
         player2Rank = evaluateHand(orderedPlayer2Hand)
         result.append(checkWhichHandIsBetter(player1Rank, player2Rank))
@@ -51,10 +50,10 @@ def evaluateHand(hand):
     is_flush = True
     is_straight = True
     collection_of_ranks_in_hand = []
-    suit_type = hand[0].get_suit()
+    suit_type = hand[0].getSuit()
     for card in range(len(hand)):
-        collection_of_ranks_in_hand.append(hand[card].get_rank())
-        if is_flush and hand[card].get_suit() != suit_type:
+        collection_of_ranks_in_hand.append(hand[card].getRank())
+        if is_flush and hand[card].getSuit() != suit_type:
             is_flush = False
         if is_straight and not isCurrentCardFollowsNextCard(card, hand):
             is_straight = False
@@ -62,7 +61,7 @@ def evaluateHand(hand):
     # Royal flush 10,Straight flush 9,Four of a kind 8,Full house 7,Flush 6,
     # Straight 5,Three of a kind 4,Two pair 3, Pair 2, High Card 1
     if is_flush and is_straight:
-        return {10: [count_the_amount_of_each_rank_in_hand[0][0]]} if hand[0].get_rank() == 14 else {
+        return {10: [count_the_amount_of_each_rank_in_hand[0][0]]} if hand[0].getRank() == 14 else {
             9: [count_the_amount_of_each_rank_in_hand[0][0]]}
     if isFourOfAKind(count_the_amount_of_each_rank_in_hand):
         return {8: [count_the_amount_of_each_rank_in_hand[0][0], count_the_amount_of_each_rank_in_hand[1][0]]}
@@ -73,10 +72,10 @@ def evaluateHand(hand):
                     count_the_amount_of_each_rank_in_hand[2][0], count_the_amount_of_each_rank_in_hand[3][0],
                     count_the_amount_of_each_rank_in_hand[4][0]]}
     if is_straight:
-        if hand[1].get_rank() == 5:
-            return {5: [hand[1].get_rank()]}
+        if hand[1].getRank() == 5:
+            return {5: [hand[1].getRank()]}
         else:
-            return {5: [hand[0].get_rank()]}
+            return {5: [hand[0].getRank()]}
     if is_three_of_a_kind(count_the_amount_of_each_rank_in_hand):
         return {4: [count_the_amount_of_each_rank_in_hand[0][0], count_the_amount_of_each_rank_in_hand[1][0],
                     count_the_amount_of_each_rank_in_hand[2][0]]}
@@ -90,8 +89,8 @@ def evaluateHand(hand):
 
 
 def isCurrentCardFollowsNextCard(card, hand):
-    return ((card == 4) or (card != 4 and hand[card].get_rank() == hand[card + 1].get_rank() + 1) or
-            (card == 0 and hand[card].get_rank() == 14 and hand[card + 1].get_rank() == 5))
+    return ((card == 4) or (card != 4 and hand[card].getRank() == hand[card + 1].getRank() + 1) or
+            (card == 0 and hand[card].getRank() == 14 and hand[card + 1].getRank() == 5))
 
 
 def isFourOfAKind(count):
