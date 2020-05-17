@@ -1,7 +1,7 @@
 import pygame
 
 from const import WIDTH, HEIGHT, GREEN_COLOR, BLUE_COLOR, DIST_BETWEEN_COLUMNS, TRANS_COL_WIDTH, DIST_BETWEEN_NUMBERS, \
-    DIST_FROM_TOP, DIST_FROM_BOTTOM, NUM_OF_HANDS_AND_CARDS, LEFT
+    DIST_FROM_TOP, DIST_FROM_BOTTOM, NUM_OF_HANDS_AND_CARDS, LEFT, DIST_FROM_RIGHT_SIDE
 from game import Play
 from view import GameView
 
@@ -27,29 +27,18 @@ class GameController:
         self.displaySideCard(screen, None)
         pygame.display.set_caption("Poker")
         clock = pygame.time.Clock()
-        font = pygame.font.Font('freesansbold.ttf', 14)
-        turnText = font.render('', True, GREEN_COLOR, BLUE_COLOR)
-        turnTextRect = turnText.get_rect()
-        turnTextRect.center = (WIDTH - 100, HEIGHT // 2 + 75)
+        font, turnTextRect = self.createTurnTextRect()
         cardsCount = 10
-        run = True
-        drawCard = True
+        needToDrawCard = True
         self.refreshCards(screen)
-        while run:
-            pygame.display.update()
-            if drawCard:
-                card = self.gamePlay.deck.dealCard()
-                self.displaySideCard(screen, card)
-                if player1Turn:
-                    turnText = font.render('Player 1 turn', True, GREEN_COLOR, BLUE_COLOR)
-                else:
-                    turnText = font.render('Player 2 turn', True, GREEN_COLOR, BLUE_COLOR)
-                screen.blit(turnText, turnTextRect)
-                pygame.display.update()
-            drawCard = False
+        gameEnded = False
+        while True:
+            if needToDrawCard and not gameEnded:
+                card = self.drawNewCard(font, player1Turn, screen, turnTextRect)
+            needToDrawCard = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    break
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                     pos = pygame.mouse.get_pos()
                     if player1Turn:
@@ -59,7 +48,7 @@ class GameController:
                                     self._player_1_cards[i].addCard(card)
                                     cardsCount = cardsCount + 1
                                     player1Turn = False
-                                    drawCard = True
+                                    needToDrawCard = True
                                     self.refreshCards(screen)
                                     pygame.display.update()
                                 break
@@ -70,19 +59,41 @@ class GameController:
                                     self._player_2_cards[i].addCard(card)
                                     cardsCount = cardsCount + 1
                                     player1Turn = True
-                                    drawCard = True
+                                    needToDrawCard = True
                                     self.refreshCards(screen)
                                     pygame.display.update()
                                     break
-            if cardsCount == 50:
-                turnTextRect.center = (WIDTH - 100, HEIGHT // 2 + 75)
-                screen.blit(turnTextRect)
-                screen.fill(GREEN_COLOR, (WIDTH - 75, HEIGHT // 2))
-                pygame.display.update()
-                gameResult = self.gamePlay.evaluateHands(self._player_1_cards, self._player_2_cards, True)
-                print('a')
+            if cardsCount == 50 and not gameEnded:
+                self.endOfGameActions(screen, turnTextRect, font)
+                gameEnded = True
             clock.tick(60)
-        pygame.quit()
+
+    def createTurnTextRect(self):
+        font = pygame.font.Font('freesansbold.ttf', 14)
+        turnText = font.render('', True, GREEN_COLOR, BLUE_COLOR)
+        turnTextRect = turnText.get_rect()
+        turnTextRect.center = (WIDTH - 100, HEIGHT // 2 + DIST_FROM_RIGHT_SIDE)
+        return font, turnTextRect
+
+    def endOfGameActions(self, screen, turnTextRect, font):
+        self.displayPlayer2Cards(screen)
+        turnText = font.render('Game Over', True, GREEN_COLOR, BLUE_COLOR)
+        screen.blit(turnText, turnTextRect)
+        gameResult = self.gamePlay.evaluateHands(self._player_1_cards, self._player_2_cards, True)
+        self.view.createGameResult(screen, gameResult)
+        pygame.display.update()
+        print(gameResult)
+
+    def drawNewCard(self, font, player1Turn, screen, turnTextRect):
+        card = self.gamePlay.deck.dealCard()
+        self.displaySideCard(screen, card)
+        if player1Turn:
+            turnText = font.render('Player 1 turn', True, GREEN_COLOR, BLUE_COLOR)
+        else:
+            turnText = font.render('Player 2 turn', True, GREEN_COLOR, BLUE_COLOR)
+        screen.blit(turnText, turnTextRect)
+        pygame.display.update()
+        return card
 
     def getImgString(self, i, j, isPlayer1):
         if isPlayer1:
@@ -113,15 +124,27 @@ class GameController:
                 except IndexError:
                     pass
 
-    def displaySideCard(self, screen, card):
+    def displayPlayer2Cards(self, screen):
+        lastIndex = 4
+        for i in range(0, NUM_OF_HANDS_AND_CARDS):
+            try:
+                img_string = 'resources/{0}{1}.gif'.format(str(self._player_2_cards[i][lastIndex].getRank()),
+                                                           str(self._player_2_cards[i][lastIndex].getSuit()))
+                image = pygame.image.load(img_string)
+                screen.blit(image, ((DIST_BETWEEN_COLUMNS * (i + 1)) + (TRANS_COL_WIDTH / 4),
+                                    (HEIGHT / 3.3) + ((lastIndex + 1) * DIST_BETWEEN_NUMBERS) + DIST_FROM_BOTTOM + 10))
+            except IndexError:
+                pass
+
+    def displaySideCard(self,screen, card):
         if card is None:
-            self.SIDE_CARD_IMG = pygame.image.load('resources/backCard.gif')
-            screen.blit(self.SIDE_CARD_IMG, (WIDTH - 75, HEIGHT // 2))
+            SIDE_CARD_IMG = pygame.image.load('resources/backCard.gif')
+            screen.blit(SIDE_CARD_IMG, (WIDTH - DIST_FROM_RIGHT_SIDE, HEIGHT // 2))
         else:
             try:
                 img_string = 'resources/{0}{1}.gif'.format(str(card.getRank()), str(card.getSuit()))
                 image = pygame.image.load(img_string)
-                screen.blit(image, (WIDTH - 75, HEIGHT // 2))
+                screen.blit(image, (WIDTH - DIST_FROM_RIGHT_SIDE, HEIGHT // 2))
             except IndexError:
                 pass
 
